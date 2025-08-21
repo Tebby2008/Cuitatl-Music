@@ -9,6 +9,26 @@
       "summary": "Exploring the Colombian roots and global evolution of one of Latin America's most beloved musical genres.",
       "image": "https://images.unsplash.com/photo-1551973295-e383216a2134?q=80&w=1200",
       "contentUrl": "https://raw.githubusercontent.com/Tebby2008/Cuicatl-Music/main/Articles/test1.md"
+    },
+    {
+      "id": 2,
+      "title": "test2 article",
+      "author": "Not ChatGPT",
+      "date": "August 15, 2025",
+      "category": "Argument",
+      "summary": "this is a summary.",
+      "image": "https://images.unsplash.com/photo-1551973295-e383216a2134?q=80&w=1200",
+      "contentUrl": "https://raw.githubusercontent.com/Tebby2008/Cuicatl-Music/main/Articles/test2.md"
+    },
+    {
+      "id": 3,
+      "title": "test1 article",
+      "author": "It's ofc ChatGPT",
+      "date": "August 15, 2025",
+      "category": "Music History",
+      "summary": "this is also a summary",
+      "image": "https://images.unsplash.com/photo-1551973295-e383216a2134?q=80&w=1200",
+      "contentUrl": "https://raw.githubusercontent.com/Tebby2008/Cuicatl-Music/main/Articles/test3.md"
     }
   ]
 }
