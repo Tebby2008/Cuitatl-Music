@@ -1,0 +1,349 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cuicatl - Latin American Music & Culture</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400..700;1,400..700&family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f8f5f2; /* A light, warm background */
+        }
+        h1, h2, h3, h4, h5, h6, .font-serif {
+            font-family: 'Lora', serif;
+        }
+        .article-content h1 { font-size: 2.25rem; line-height: 2.5rem; font-weight: 700; margin-bottom: 1.5rem; }
+        .article-content h2 { font-size: 1.875rem; line-height: 2.25rem; font-weight: 600; margin-bottom: 1.25rem; margin-top: 2rem; }
+        .article-content p { margin-bottom: 1.25rem; line-height: 1.75; font-size: 1.125rem; color: #333; }
+        .article-content a { color: #c05621; text-decoration: underline; }
+        .article-content blockquote { border-left: 4px solid #c05621; padding-left: 1rem; margin-left: 0; font-style: italic; color: #555; }
+        .article-content ul { list-style-type: disc; padding-left: 1.5rem; margin-bottom: 1.25rem; }
+        .article-content ol { list-style-type: decimal; padding-left: 1.5rem; margin-bottom: 1.25rem; }
+        .article-content iframe { max-width: 100%; margin: 1.5rem 0; border-radius: 0.5rem; }
+    </style>
+</head>
+<body class="text-gray-800">
+
+    <!-- Header -->
+    <header class="bg-white/80 backdrop-blur-md shadow-sm sticky top-0 z-50">
+        <nav class="container mx-auto px-6 py-4 flex justify-between items-center">
+            <a href="#" class="text-3xl font-bold font-serif text-gray-900">Cuicatl</a>
+            <div class="hidden md:flex space-x-8 items-center">
+                <a href="#home" class="text-gray-600 hover:text-gray-900 transition duration-300 nav-link">Home</a>
+                <a href="#about" class="text-gray-600 hover:text-gray-900 transition duration-300 nav-link">About</a>
+                <a href="https://github.com/Tebby2008/Cuicatl-Music/" target="_blank" class="text-gray-600 hover:text-gray-900 transition duration-300">Contribute</a>
+            </div>
+            <button id="mobile-menu-button" class="md:hidden text-gray-800 focus:outline-none">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-4 6h4"></path></svg>
+            </button>
+        </nav>
+        <!-- Mobile Menu -->
+        <div id="mobile-menu" class="hidden md:hidden px-6 pb-4">
+            <a href="#home" class="block py-2 text-gray-600 hover:text-gray-900 nav-link">Home</a>
+            <a href="#about" class="block py-2 text-gray-600 hover:text-gray-900 nav-link">About</a>
+            <a href="https://github.com/your-repo" target="_blank" class="block py-2 text-gray-600 hover:text-gray-900">Contribute</a>
+        </div>
+    </header>
+
+    <main id="app-root" class="container mx-auto p-4 md:p-6"></main>
+
+    <!-- Footer -->
+    <footer class="bg-gray-800 text-white mt-12">
+        <div class="container mx-auto px-6 py-8">
+            <div class="flex flex-col md:flex-row justify-between items-center">
+                <div class="mb-6 md:mb-0">
+                    <h3 class="text-2xl font-serif font-bold">Cuicatl</h3>
+                    <p class="text-gray-400 mt-2">Promoting Latin American Musical Culture.</p>
+                </div>
+                <div class="flex space-x-6">
+                    <a href="#" class="text-gray-400 hover:text-white transition duration-300">Twitter</a>
+                    <a href="#" class="text-gray-400 hover:text-white transition duration-300">Instagram</a>
+                    <a href="#" class="text-gray-400 hover:text-white transition duration-300">YouTube</a>
+                </div>
+            </div>
+            <div class="mt-8 border-t border-gray-700 pt-6 text-center text-gray-500 text-sm">
+                &copy; <span id="footer-year"></span> Cuicatl. All Rights Reserved.
+            </div>
+        </div>
+    </footer>
+
+
+    <!-- JavaScript Logic -->
+    <script>
+        const App = {
+            // --- CONFIGURATION ---
+            // IMPORTANT: Replace this URL with the raw GitHub content URL for your metadata.json file.
+            // Example format: https://raw.githubusercontent.com/YourUsername/YourRepoName/main/Resources/metadata.json
+            metadataUrl: 'https://raw.githubusercontent.com/Tebby2008/Cuicatl-Music/main/Resources/metadata.json',
+
+            // --- STATE ---
+            articles: [],
+            
+            // --- DOM ELEMENTS ---
+            root: document.getElementById('app-root'),
+
+            // --- INITIALIZATION ---
+            init() {
+                // Set up mobile menu toggle
+                document.getElementById('mobile-menu-button').addEventListener('click', () => {
+                    document.getElementById('mobile-menu').classList.toggle('hidden');
+                });
+                document.getElementById('footer-year').textContent = new Date().getFullYear();
+
+                // Add event listeners for navigation
+                document.querySelectorAll('.nav-link').forEach(link => {
+                    link.addEventListener('click', (e) => {
+                        e.preventDefault();
+                        const targetId = e.target.getAttribute('href').substring(1);
+                        if (targetId === 'home') {
+                            this.renderHomePage();
+                        } else if (targetId === 'about') {
+                            this.renderAboutPage();
+                        }
+                        // Close mobile menu on navigation
+                        document.getElementById('mobile-menu').classList.add('hidden');
+                    });
+                });
+
+                // Handle URL routing on initial load and hash changes
+                window.addEventListener('hashchange', this.router.bind(this));
+                window.addEventListener('load', this.router.bind(this));
+            },
+
+            // --- ROUTING ---
+            async router() {
+                // Fetch data only if we haven't already
+                if (this.articles.length === 0) {
+                    await this.fetchData();
+                }
+
+                const hash = window.location.hash;
+                if (hash.startsWith('#article-')) {
+                    const articleId = hash.substring(9);
+                    this.renderArticlePage(articleId);
+                } else if (hash === '#about') {
+                    this.renderAboutPage();
+                } else {
+                    this.renderHomePage();
+                }
+                window.scrollTo(0, 0); // Scroll to top on page change
+            },
+
+            // --- DATA FETCHING ---
+            async fetchData() {
+                try {
+                    const response = await fetch(this.metadataUrl);
+                    if (!response.ok) {
+                        throw new Error(`HTTP error! status: ${response.status}`);
+                    }
+                    const data = await response.json();
+                    this.articles = data.articles;
+                } catch (error) {
+                    console.error("Error fetching metadata:", error);
+                    this.root.innerHTML = `<div class="text-center p-8 bg-red-100 text-red-700 rounded-lg">
+                        <h2 class="text-2xl font-bold">Failed to load content</h2>
+                        <p>Could not fetch article data. Please check the console for more details and ensure the metadata URL is correct.</p>
+                    </div>`;
+                }
+            },
+
+            // --- TEMPLATES & RENDERING ---
+
+            // Homepage Template
+            renderHomePage() {
+                if (this.articles.length === 0) {
+                     this.root.innerHTML = `<div class="text-center p-8"><div class="animate-spin rounded-full h-12 w-12 border-b-2 border-gray-900 mx-auto"></div><p class="mt-4">Loading articles...</p></div>`;
+                     return;
+                }
+
+                const featured = this.articles[0];
+                const otherArticles = this.articles.slice(1);
+
+                this.root.innerHTML = `
+                    <!-- Featured Article -->
+                    <section class="mb-12">
+                        <a href="#article-${featured.id}" class="block group overflow-hidden rounded-lg shadow-lg hover:shadow-2xl transition-shadow duration-300">
+                            <div class="relative">
+                                <img src="${featured.image}" alt="${featured.title}" class="w-full h-64 md:h-96 object-cover group-hover:scale-105 transition-transform duration-300" onerror="this.onerror=null;this.src='https://placehold.co/1200x600/d1c7bd/4a4a4a?text=Image+Not+Found';">
+                                <div class="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent"></div>
+                                <div class="absolute bottom-0 left-0 p-6 md:p-8">
+                                    <span class="text-xs uppercase font-semibold text-white bg-red-600 px-2 py-1 rounded">${featured.category}</span>
+                                    <h1 class="text-2xl md:text-4xl font-serif font-bold text-white mt-2 group-hover:underline">${featured.title}</h1>
+                                    <p class="text-gray-200 mt-2 hidden md:block">${featured.summary}</p>
+                                </div>
+                            </div>
+                        </a>
+                    </section>
+
+                    <!-- Other Articles Grid -->
+                    <section>
+                        <h2 class="text-3xl font-serif font-bold mb-6 border-b-2 border-gray-300 pb-2">Latest Articles</h2>
+                        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                            ${otherArticles.map(article => `
+                                <a href="#article-${article.id}" class="block group bg-white rounded-lg shadow-md hover:shadow-xl transition-shadow duration-300 overflow-hidden">
+                                    <img src="${article.image}" alt="${article.title}" class="w-full h-48 object-cover" onerror="this.onerror=null;this.src='https://placehold.co/600x400/d1c7bd/4a4a4a?text=Image';">
+                                    <div class="p-6">
+                                        <span class="text-xs uppercase font-semibold text-red-600">${article.category}</span>
+                                        <h3 class="text-xl font-serif font-bold mt-2 mb-2 group-hover:text-red-700 transition-colors duration-300">${article.title}</h3>
+                                        <p class="text-gray-600 text-sm mb-3">${article.summary}</p>
+                                        <div class="text-xs text-gray-500">
+                                            <span>By ${article.author}</span> &bull;
+                                            <span>${article.date}</span>
+                                        </div>
+                                    </div>
+                                </a>
+                            `).join('')}
+                        </div>
+                    </section>
+                `;
+            },
+
+            // About Page Template
+            renderAboutPage() {
+                this.root.innerHTML = `
+                    <div class="bg-white p-8 md:p-12 rounded-lg shadow-lg">
+                        <h1 class="text-4xl md:text-5xl font-serif font-bold text-center mb-8">About Cuicatl</h1>
+                        
+                        <div class="max-w-3xl mx-auto text-lg text-gray-700 leading-relaxed">
+                            <section class="mb-12">
+                                <h2 class="text-3xl font-serif font-semibold mb-4 border-b-2 border-red-200 pb-2">Our Mission</h2>
+                                <p>Cuicatl is dedicated to the vibrant and diverse world of Latin American music. Our mission is to create a comprehensive, accessible, and engaging resource for enthusiasts, students, and scholars. We aim to celebrate the rich tapestry of musical traditions, from the folk roots of the Andes to the pulsating rhythms of the Caribbean, and everything in between.</p>
+                            </section>
+
+                            <section>
+                                <h2 class="text-3xl font-serif font-semibold mb-4 border-b-2 border-red-200 pb-2">Who We Are</h2>
+                                <p>We are a passionate collective of musicians, historians, and cultural advocates. We believe that music is a powerful lens through which to understand culture, history, and identity. Through in-depth articles, exclusive interviews, and curated resources, we strive to share the stories, sounds, and soul of Latin America with the world.</p>
+                            </section>
+                        </div>
+                    </div>
+                `;
+            },
+
+            // Single Article Page Template
+            async renderArticlePage(articleId) {
+                const article = this.articles.find(a => a.id == articleId);
+                if (!article) {
+                    this.root.innerHTML = `<div class="text-center p-8"><h2 class="text-2xl font-bold">Article not found.</h2><a href="#home" class="text-red-600 hover:underline mt-4 inline-block">Return to Home</a></div>`;
+                    return;
+                }
+
+                // Show loading state while fetching markdown
+                this.root.innerHTML = `<div class="text-center p-8"><div class="animate-spin rounded-full h-12 w-12 border-b-2 border-gray-900 mx-auto"></div><p class="mt-4">Loading article content...</p></div>`;
+
+                try {
+                    const response = await fetch(article.contentUrl);
+                    if (!response.ok) throw new Error('Failed to fetch article markdown');
+                    const markdown = await response.text();
+                    
+                    // NOTE: marked.js converts markdown to HTML.
+                    // This setup allows embedding videos via HTML <iframe> tags directly in your .md files.
+                    const contentHtml = marked.parse(markdown);
+
+                    this.root.innerHTML = `
+                        <div class="bg-white rounded-lg shadow-lg overflow-hidden">
+                            <!-- Article Header -->
+                            <div class="relative">
+                                <img src="${article.image}" alt="${article.title}" class="w-full h-64 md:h-96 object-cover" onerror="this.onerror=null;this.src='https://placehold.co/1200x600/d1c7bd/4a4a4a?text=Image+Not+Found';">
+                                <div class="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent"></div>
+                                <div class="absolute bottom-0 left-0 p-6 md:p-10">
+                                    <h1 class="text-3xl md:text-5xl font-serif font-bold text-white">${article.title}</h1>
+                                    <p class="text-gray-200 mt-2">By ${article.author} &bull; ${article.date}</p>
+                                </div>
+                            </div>
+                            
+                            <!-- Article Body & Sidebar -->
+                            <div class="flex flex-col lg:flex-row">
+                                <!-- Main Content -->
+                                <div class="w-full lg:w-2/3 p-6 md:p-10 article-content">
+                                    ${contentHtml}
+                                </div>
+
+                                <!-- Sidebar -->
+                                <aside class="w-full lg:w-1/3 p-6 md:p-10 lg:border-l border-gray-200 bg-gray-50">
+                                    <div class="sticky top-24">
+                                        <h3 class="font-serif font-bold text-xl mb-4">Share this Article</h3>
+                                        <div class="flex space-x-4 mb-8">
+                                            <!-- Sharing links can be implemented with JavaScript -->
+                                            <button onclick="App.share('twitter')" class="w-12 h-12 bg-gray-200 rounded-full flex items-center justify-center hover:bg-gray-300 transition-colors">
+                                                <svg class="w-6 h-6" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path d="M24 4.557c-.883.392-1.832.656-2.828.775 1.017-.609 1.798-1.574 2.165-2.724-.951.564-2.005.974-3.127 1.195-.897-.957-2.178-1.555-3.594-1.555-3.179 0-5.515 2.966-4.797 6.045-4.091-.205-7.719-2.165-10.148-5.144-1.29 2.213-.669 5.108 1.523 6.574-.806-.026-1.566-.247-2.229-.616v.064c0 2.298 1.634 4.212 3.793 4.649-.65.177-1.354.23-2.06.088.621 1.956 2.423 3.379 4.568 3.419-1.79 1.406-4.063 2.245-6.516 2.245-.42 0-.836-.025-1.244-.074 2.305 1.482 5.048 2.34 8.041 2.34 9.647 0 14.93-7.999 14.697-14.697.998-.722 1.864-1.622 2.557-2.65z"/></svg>
+                                            </button>
+                                            <button onclick="App.share('facebook')" class="w-12 h-12 bg-gray-200 rounded-full flex items-center justify-center hover:bg-gray-300 transition-colors">
+                                                <svg class="w-6 h-6" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path d="M22.675 0h-21.35c-.732 0-1.325.593-1.325 1.325v21.351c0 .731.593 1.324 1.325 1.324h11.495v-9.294h-3.128v-3.622h3.128v-2.671c0-3.1 1.893-4.788 4.659-4.788 1.325 0 2.463.099 2.795.143v3.24l-1.918.001c-1.504 0-1.795.715-1.795 1.763v2.313h3.587l-.467 3.622h-3.12v9.293h6.116c.73 0 1.323-.593 1.323-1.325v-21.35c0-.732-.593-1.325-1.325-1.325z"/></svg>
+                                            </button>
+                                        </div>
+
+                                        <h3 class="font-serif font-bold text-xl mb-4">Actions</h3>
+                                        <div class="space-y-3">
+                                            <button onclick="App.copyLink()" class="w-full text-left bg-gray-200 hover:bg-gray-300 transition-colors px-4 py-3 rounded-lg flex items-center">
+                                                <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"></path></svg>
+                                                Copy Link
+                                            </button>
+                                            <div id="copy-feedback" class="text-sm text-green-600 h-4"></div>
+                                        </div>
+                                    </div>
+                                </aside>
+                            </div>
+                        </div>
+                    `;
+                } catch (error) {
+                    console.error("Error rendering article:", error);
+                    this.root.innerHTML = `<div class="text-center p-8 bg-red-100 text-red-700 rounded-lg">
+                        <h2 class="text-2xl font-bold">Failed to load article content</h2>
+                        <p>The article file might be missing or the URL is incorrect. Please check the console.</p>
+                        <a href="#home" class="text-red-600 hover:underline mt-4 inline-block">Return to Home</a>
+                    </div>`;
+                }
+            },
+            
+            // --- SIDEBAR ACTIONS ---
+            copyLink() {
+                const url = window.location.href;
+                // Using document.execCommand as a fallback for iframe environments
+                const dummy = document.createElement('textarea');
+                document.body.appendChild(dummy);
+                dummy.value = url;
+                dummy.select();
+                try {
+                    document.execCommand('copy');
+                    const feedback = document.getElementById('copy-feedback');
+                    if(feedback) {
+                        feedback.textContent = 'Link copied to clipboard!';
+                        setTimeout(() => { feedback.textContent = ''; }, 2000);
+                    }
+                } catch (err) {
+                    console.error('Failed to copy link: ', err);
+                     const feedback = document.getElementById('copy-feedback');
+                    if(feedback) feedback.textContent = 'Failed to copy!';
+                }
+                document.body.removeChild(dummy);
+            },
+
+            share(platform) {
+                const url = encodeURIComponent(window.location.href);
+                const article = this.articles.find(a => `#article-${a.id}` === window.location.hash);
+                const text = article ? encodeURIComponent(`Check out this article: ${article.title}`) : '';
+                let shareUrl = '';
+
+                if (platform === 'twitter') {
+                    shareUrl = `https://twitter.com/intent/tweet?url=${url}&text=${text}`;
+                } else if (platform === 'facebook') {
+                    shareUrl = `https://www.facebook.com/sharer/sharer.php?u=${url}`;
+                }
+
+                if (shareUrl) {
+                    window.open(shareUrl, '_blank', 'noopener,noreferrer,width=600,height=400');
+                }
+            }
+        };
+
+        // Start the application
+        App.init();
+
+    </script>
+</body>
+</html>
