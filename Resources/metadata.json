@@ -1,0 +1,14 @@
+{
+  "articles": [
+    {
+      "id": 1,
+      "title": "test1 article",
+      "author": "Johnald ChatGPT",
+      "date": "August 15, 2025",
+      "category": "Music History",
+      "summary": "Exploring the Colombian roots and global evolution of one of Latin America's most beloved musical genres.",
+      "image": "https://images.unsplash.com/photo-1551973295-e383216a2134?q=80&w=1200",
+      "contentUrl": "https://raw.githubusercontent.com/Tebby2008/Cuicatl-Music/main/Articles/test1.md"
+    }
+  ]
+}
